@@ -15,6 +15,7 @@ import NotFound from './components/NotFound';
 function App() {
   return (
     <div>
+      <Header />
       <Routes>
         <Route path="/" element={<Courses />} />
         <Route path="/courses/:id" element={<CourseDetail />} />
