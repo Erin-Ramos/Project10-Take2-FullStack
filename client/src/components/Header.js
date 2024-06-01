@@ -1,5 +1,3 @@
-// TODO: PULLED FROM REACT-AUTH FILE - NOT READY
-
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 

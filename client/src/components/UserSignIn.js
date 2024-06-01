@@ -1,8 +1,5 @@
-// TODO: PULLED FROM REACT-CONTEXT FILE - NOT READY
-/*
-
 import { useRef, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 import UserContext from '../context/UserContext';
 
@@ -10,52 +7,49 @@ const UserSignIn = () => {
   const { actions } = useContext(UserContext);
 
   // State
-  const username = useRef(null);
+  const emailAddress = useRef(null);
   const password = useRef(null);
 
   const navigate = useNavigate();
 
   // Event Handlers
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    actions.signIn(username.current.value, password.current.value);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    actions.signIn(emailAddress.current.value, password.current.value);
     navigate("/");
   }
 
-  const handleCancel = (event) => {
-    event.preventDefault();
+  const handleCancel = (e) => {
+    e.preventDefault();
     navigate('/');
   }
 
   return (
-    <div className="bounds">
-      <div className="grid-33 centered signin">
-        <h1>Sign In</h1>
-        <div>
-          <form onSubmit={handleSubmit}>
-            <input
-              id="username"
-              required
-              type="text"
-              ref={username}
-              placeholder="Username" />
-            <input
-              id="password"
-              required
-              type="password"
-              ref={password}
-              placeholder="Password" />
-            <div className="pad-bottom">
-              <button className="button" type="submit" style={{ background: accentColor }}>Sign In</button>
-              <button className="button button-secondary" style={{ color: accentColor }} onClick={handleCancel}>Cancel</button>
-            </div>
-          </form>
-        </div>
+    <main>
+      <div className="form--centered">
+        <h2>Sign In</h2>
+
+        <form onSubmit={handleSubmit}>
+          <input
+            id="emailAddress"
+            required
+            type="text"
+            ref={emailAddress}
+            placeholder="Email Address" />
+          <input
+            id="password"
+            required
+            type="password"
+            ref={password}
+            placeholder="Password" />
+
+            <button className="button" type="submit">Sign In</button>
+            <button className="button button-secondary" onClick={handleCancel}>Cancel</button>
+        </form>
+        <p>Don't have a user account? Click here to <Link to={'/signup'}>sign up</Link>!</p>
+
       </div>
-    </div>
-  );
+    </main>
+  )
 }
-
-export default UserSignIn;
-
-*/
+  export default UserSignIn;

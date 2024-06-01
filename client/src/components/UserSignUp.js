@@ -1,92 +1,97 @@
-// TODO: PULLED FROM REACT-AUTH FILE - NOT READY
-/* 
 import { useContext, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-
+import { api } from '../utils/apiHelper';
+import ErrorsDisplay from '../components/ErrorsDisplay';
 import UserContext from '../context/UserContext';
 
-const UserSignIn = () => {
+const UserSignUp = () => {
   const { actions } = useContext(UserContext);
-  const { accentColor } = useContext(ThemeContext);
   const navigate = useNavigate();
 
   // State
-  const name = useRef(null);
-  const username = useRef(null);
+  const firstName = useRef(null);
+  const lastName = useRef(null);
+  const emailAddress = useRef(null);
   const password = useRef(null);
   const [errors, setErrors] = useState([]);
 
-  // event handlers
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  // Event handlers
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     const user = {
-      name: name.current.value,
-      username: username.current.value,
+      firstName: firstName.current.value,
+      lastName: lastName.current.value,
+      emailAddress: emailAddress.current.value,
       password: password.current.value
     }
 
     try {
-      const response = await api("/users", "POST", user);
-      if (response.status === 201) {
-        console.log(`${user.username} is successfully signed up and authenticated!`);
-        await actions.signIn(user);
-        navigate("/authenticated");
-      } else if (response.status === 400) {
-        const data = await response.json();
+      const res = await api("/users", "POST", user);
+      if (res.status === 201) {
+        console.log(`${user.firstName} is successfully signed up and authenticated!`);
+        await actions.signIn(user.emailAddress, user.password); 
+        navigate("/");
+      } else if (res.status === 400) {
+        const data = await res.json();
         setErrors(data.errors);
       } else {
         throw new Error();
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       navigate("/error");
     }
   }
 
-  const handleCancel = (event) => {
-    event.preventDefault();
+  const handleCancel = (e) => {
+    e.preventDefault();
     navigate("/");
   }
 
   return (
-    <div className="bounds">
-      <div className="grid-33 centered signin">
-        <h1>Sign up</h1>
-        <div>
-          <ErrorsDisplay errors={errors} />
-          <form onSubmit={handleSubmit}>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              ref={name}
-              placeholder="Name" />
-            <input
-              id="username"
-              name="username"
-              type="text"
-              ref={username}
-              placeholder="User Name" />
-            <input
-              id="password"
-              name="password"
-              type="password"
-              ref={password}
-              placeholder="Password" />
-            <div className="pad-bottom">
-              <button className="button" type="submit" style={{ background: accentColor }}>Sign up</button>
-              <button className="button button-secondary" style={{ color: accentColor }} onClick={handleCancel}>Cancel</button>
-            </div>
-          </form>
-        </div>
-        <p>
-          Already have a user account? <Link style={{ color: accentColor }} to="/signin">Click here</Link> to sign in!
-        </p>
+    <div className="form--centered">
+      <h2>Sign Up</h2>
+      <div>
+        <ErrorsDisplay errors={errors} />
+        <form onSubmit={handleSubmit}>
+          <input
+            id="firstName"
+            name="firstName"
+            type="text"
+            ref={firstName}
+            placeholder="First Name"
+            required />
+          <input
+            id="lastName"
+            name="lastName"
+            type="text"
+            ref={lastName}
+            placeholder="Last Name"
+            required />
+          <input
+            id="emailAddress"
+            name="emailAddress"
+            type="email"
+            ref={emailAddress}
+            placeholder="Email Address"
+            required />
+          <input
+            id="password"
+            name="password"
+            type="password"
+            ref={password}
+            placeholder="Password"
+            required />
+          <button className="button" type="submit">Sign Up</button>
+          <button className="button button-secondary" onClick={handleCancel}>Cancel</button>
+        </form>
       </div>
+      <p>
+        Already have a user account? <Link to="/signin">Click Here</Link> to sign in!
+      </p>
     </div>
   );
 }
 
-export default UserSignIn;
-*/
+export default UserSignUp;
