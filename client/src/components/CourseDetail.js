@@ -1,16 +1,16 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Markdown from 'react-markdown';
+
 import { api } from '../utils/apiHelper';
 import UserContext from '../context/UserContext';
 
 const Course = () => {
     const { authUser } = useContext(UserContext);
+    const [course, setCourse] = useState({});
+
     const navigate = useNavigate();
     const { id } = useParams();
-
-    const [course, setCourse] = useState({});
-    const [user, setUser] = useState({});
 
     useEffect(() => {
         const fetchCourse = async () => {
@@ -19,12 +19,11 @@ const Course = () => {
                 if (res.status === 200) {
                     const responseData = await res.json();
                     setCourse(responseData);
-                    setUser(responseData.user);
                 } else if (res.status === 404) {
                     navigate('/NotFound');
                 }
-            } catch (err) {
-                console.error('Error fetching course data', err);
+            } catch (error) {
+                console.error('Error fetching course data', error);
                 navigate('/Error');
             }
         }
@@ -34,11 +33,17 @@ const Course = () => {
     const deleteCourse = async (e) => {
         e.preventDefault();
         try {
-            const res = await api(`/courses/${id}`, "DELETE", null, authUser);
+            const res = await api(`/courses/${id}`, "DELETE", null, {
+                emailAddress: authUser.email, 
+                password: authUser.password
+            });
+
             if (res.status === 204) {
                 navigate('/');
-            } else if (res.status === 403) {
+            } else if (res.status === 401) {
                 console.log('You are not authorized to delete this course');
+            } else {
+                console.log(`Unexpected Error. Status code: ${res.status}`)
             }
         } catch (err) {
             console.error('Error deleting course', err);
@@ -50,14 +55,14 @@ const Course = () => {
         <main>
             <div className="actions--bar">
                 <div className="wrap">
-                    {
-                        (authUser?.id === user?.id)
-                            ? <>
+                    
+                        {authUser && authUser.id === course.userId && (
+                            <>
                                 <Link className="button" to={`/courses/${id}/update`}>Update Course</Link>
                                 <button className="button" onClick={deleteCourse}>Delete Course</button>
                             </>
-                            : null
-                    }
+                        )}
+                    
 
                     <Link className="button" to={'/'}>Return to List</Link>
                 </div>
@@ -69,7 +74,7 @@ const Course = () => {
                         <div>
                             <h3 className="course--detail--title">Course</h3>
                             <h4 className="course--name">{course.title}</h4>
-                            <p>By {user?.firstName} {user?.lastName}</p>
+                            <p>By {course.user?.firstName} {course.user?.lastName}</p>
                             <Markdown>{course.description}</Markdown>
                         </div>
                         <div>

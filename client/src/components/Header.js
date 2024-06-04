@@ -5,7 +5,6 @@ import UserContext from '../context/UserContext';
 
 const Header = () => {
   const { authUser } = useContext(UserContext);
-  console.log(authUser);
 
   return (
     <header>

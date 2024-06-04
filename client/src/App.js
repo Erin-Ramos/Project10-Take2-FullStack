@@ -12,7 +12,7 @@ import UserSignOut from './components/UserSignOut';
 import UserSignUp from './components/UserSignUp';
 import NotFound from './components/NotFound';
 import Error from './components/Error';
-import ProtectedRoute from './components/ProtectedRoute';
+import PrivateRoute from "./components/PrivateRoute.js";
 
 function App() {
   return (
@@ -22,9 +22,11 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/courses" />} />
           <Route path="/courses" element={<Courses />} />
-          <Route path="/courses/:id" element={<ProtectedRoute component={CourseDetail} />} />
-          <Route path="/courses/create" element={<CreateCourse />} />
-          <Route path="/courses/:id/update" element={<UpdateCourse />} />
+          <Route path="/courses/:id" element={<CourseDetail />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/courses/create" element={<CreateCourse />} />
+            <Route path="/courses/:id/update" element={<UpdateCourse />} />
+          </Route>
           <Route path="/signin" element={<UserSignIn />} />
           <Route path="/signout" element={<UserSignOut />} />
           <Route path="/signup" element={<UserSignUp />} />
