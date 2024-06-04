@@ -1,24 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../utils/apiHelper';
 
 const Courses = () => {
     const [courses, setCourses] = useState([]);
 
+    const navigate = useNavigate();
+
     useEffect(() => {
 
+        // Fetch courses using API
         const fetchCourses = async () => {
             try {
                 const res = await api("/courses", "GET", null, null);
-                const responseData = await res.json();
-                setCourses(responseData);
+                if (res.status === 200) {
+                    const responseData = await res.json();
+                    setCourses(responseData);
+                } else { 
+                    console.log(`Unexpected Error. Status code: ${res.status}`)
+                    navigate('/Error');
+                }
             } catch (err) {
                 console.error('Error fetching courses data', err);
                 throw err;
             }
         }
         fetchCourses();
-    }, []);
+    }, [navigate]);
 
     return (
         <main>

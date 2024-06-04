@@ -4,19 +4,23 @@ import UserContext from '../context/UserContext';
 import { api } from '../utils/apiHelper';
 import ErrorsDisplay from '../components/ErrorsDisplay';
 
+// Function to create a new course
 const CreateCourse = () => {
     const { authUser } = useContext(UserContext);
     const navigate = useNavigate();
 
+    // References to form input fields
     const courseTitle = useRef(null);
     const courseDescription = useRef(null);
     const estimatedTime = useRef(null);
     const materialsNeeded = useRef(null);
     const [errors, setErrors] = useState([]);
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // Create a new course object with the form data and authenticated user ID
         const newCourse = {
             userId: authUser.id,
             title: courseTitle.current.value,
@@ -36,8 +40,9 @@ const CreateCourse = () => {
             } else if (res.status === 400) {
                 const data = await res.json();
                 setErrors(data.errors);
-            } else {
-                throw new Error('Failed to create course');
+            } else { 
+                console.log(`Unexpected Error. Status code: ${res.status}`)
+                navigate('/Error');
             }
         } catch (error) {
             console.error('Error creating course:', error);
@@ -45,6 +50,7 @@ const CreateCourse = () => {
         }
     };
 
+    // Handle cancel button to navigate back to the home page
     const handleCancel = (e) => {
         e.preventDefault();
         navigate('/');
@@ -58,7 +64,7 @@ const CreateCourse = () => {
                 <form onSubmit={handleSubmit}>
                     <div className='main--flex'>
                         <div>
-                            <label for="courseTitle">Course Title</label>
+                            <label htmlFor="courseTitle">Course Title</label>
                             <input
                                 id="courseTitle"
                                 name="courseTitle"
@@ -68,7 +74,7 @@ const CreateCourse = () => {
                             <p>
                                 By {authUser.firstName} {authUser.lastName}
                             </p>
-                            <label for="courseDescription">Course Description</label>
+                            <label htmlFor="courseDescription">Course Description</label>
                             <textarea
                                 id="courseDescription"
                                 name="courseDescription"
@@ -76,14 +82,14 @@ const CreateCourse = () => {
                             />
                         </div>
                         <div>
-                            <label for="estimatedTime">Estimated Time</label>
+                            <label htmlFor="estimatedTime">Estimated Time</label>
                             <input
                                 id="estimatedTime"
                                 name="estimatedTime"
                                 type="text"
                                 ref={estimatedTime}
                             />
-                            <label for="materialsNeeded">Materials Needed</label>
+                            <label htmlFor="materialsNeeded">Materials Needed</label>
                             <textarea
                                 id="materialsNeeded"
                                 name="materialsNeeded"

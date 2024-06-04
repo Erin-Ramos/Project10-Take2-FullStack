@@ -4,6 +4,7 @@ import UserContext from '../context/UserContext';
 import { api } from '../utils/apiHelper';
 import ErrorsDisplay from '../components/ErrorsDisplay';
 
+//Function update a course
 const UpdateCourse = () => {
     const { authUser } = useContext(UserContext);
     const navigate = useNavigate();
@@ -17,26 +18,31 @@ const UpdateCourse = () => {
     const [errors, setErrors] = useState([]);
 
     useEffect(() => {
-        const fetchCourse = async () => {
-            try {
-                const res = await api(`/courses/${id}`, "GET", null, {
-                    emailAddress: authUser.email,
-                    password: authUser.password
-                });
 
-                if (res.status === 200) {
-                    const responseData = await res.json();
-                    setCourse(responseData);
-                } else if (res.status === 400) {
-                    const data = await res.json();
-                    setErrors(data.errors);
-                } else {
-                    throw new Error();
+        // Fetch data from the API
+        const fetchCourse = async () => {
+                try {
+                    const res = await api(`/courses/${id}`, "GET", null, {
+                        emailAddress: authUser.email,
+                        password: authUser.password
+                    });
+    
+                    if (res.status === 200) {
+                        const responseData = await res.json();
+                        setCourse(responseData);
+                    } else if (res.status === 400) {
+                        const data = await res.json();
+                        setErrors(data.errors);
+                    } else if (res.status === 403) {
+                        navigate('/Forbidden');
+                    } else { 
+                        console.log(`Unexpected Error. Status code: ${res.status}`)
+                        navigate('/Error');
+                    }
+                } catch (error) {
+                    console.error('Error fetching course data', error);
+                    navigate('/Error');
                 }
-            } catch (error) {
-                console.error('Error fetching course data', error);
-                navigate('/Error');
-            }
         };
 
         fetchCourse();
@@ -44,6 +50,7 @@ const UpdateCourse = () => {
 
     useEffect(() => {
         if (course) {
+            // Set the current values of the input fields to the values from the 'course' object
             courseTitle.current.value = course.title;
             courseDescription.current.value = course.description;
             estimatedTime.current.value = course.estimatedTime;
@@ -51,8 +58,11 @@ const UpdateCourse = () => {
         }
     }, [course]);
 
+    // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Create an update course object with the form data and authenticated user ID
         const updateCourse = {
             userId: authUser.id,
             title: courseTitle.current.value,
@@ -71,8 +81,11 @@ const UpdateCourse = () => {
             } else if (res.status === 400) {
                 const data = await res.json();
                 setErrors(data.errors);
-            } else {
-                throw new Error('Failed to update course');
+            } else if (res.status === 403) {
+                navigate('/Forbidden');
+            } else { 
+                console.log(`Unexpected Error. Status code: ${res.status}`)
+                navigate('/Error');
             }
         } catch (error) {
             console.error('Error updating course data', error);
@@ -80,6 +93,7 @@ const UpdateCourse = () => {
         }
     };
 
+    // Handle cancellation and return to home page
     const handleCancel = (e) => {
         e.preventDefault();
         navigate('/');

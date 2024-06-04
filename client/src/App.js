@@ -12,7 +12,8 @@ import UserSignOut from './components/UserSignOut';
 import UserSignUp from './components/UserSignUp';
 import NotFound from './components/NotFound';
 import Error from './components/Error';
-import PrivateRoute from "./components/PrivateRoute.js";
+import Forbidden from './components/Forbidden'
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
           <Route path="/error" element={<Error />} />
           <Route path="*" element={<Navigate to="/notfound" />} />
           <Route path="/notfound" element={<NotFound />} />
+          <Route path="/forbidden" element={<Forbidden />} />
         </Routes>
       </>
     </>

@@ -2,12 +2,15 @@ import { createContext, useState } from "react";
 import Cookies from 'js-cookie';
 import { api } from '../utils/apiHelper';
 
+// Create a UserContext with a default value of null
 const UserContext = createContext(null);
 
+// UserProvider component to manage user authentication state
 export const UserProvider = (props) => {
     const cookie = Cookies.get("authenticatedUser");
     const [authUser, setAuthUser] = useState(cookie ? JSON.parse(cookie) : null);
 
+    // Function to handle user sign-in
     const signIn = async (emailAddress, password) => {
         try {
             const res = await api("/users/", "GET", null, { emailAddress, password });
@@ -28,11 +31,13 @@ export const UserProvider = (props) => {
         }
     };
 
+    // Function to handle user sign-out
     const signOut = () => {
         setAuthUser(null);
         Cookies.remove("authenticatedUser");
     };
 
+    // Provide the authUser state and authentication actions to children components
     return (
         <UserContext.Provider value={{
             authUser,

@@ -5,18 +5,22 @@ import ErrorsDisplay from '../components/ErrorsDisplay';
 import UserContext from '../context/UserContext';
 
 const UserSignUp = () => {
+  // Access sign-in action from UserContext
   const { actions } = useContext(UserContext);
   const navigate = useNavigate();
 
+  // Referencecs to form input fields
   const firstName = useRef(null);
   const lastName = useRef(null);
   const emailAddress = useRef(null);
   const password = useRef(null);
   const [errors, setErrors] = useState([]);
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // create user object
     const user = {
       firstName: firstName.current.value,
       lastName: lastName.current.value,
@@ -24,6 +28,7 @@ const UserSignUp = () => {
       password: password.current.value
     };
 
+    // Try to sign-up the user
     try {
       const res = await api("/users", "POST", user);
       if (res.status === 201) {
@@ -33,15 +38,17 @@ const UserSignUp = () => {
       } else if (res.status === 400) {
         const data = await res.json();
         setErrors(data.errors);
-      } else {
-        throw new Error();
-      }
+      } else { 
+        console.log(`Unexpected Error. Status code: ${res.status}`)
+        navigate('/Error');
+    }
     } catch (error) {
       console.error('Error during sign up', error);
       navigate("/error");
     }
   };
 
+  // Handle cancellation and return to the home page
   const handleCancel = (e) => {
     e.preventDefault();
     navigate("/");
@@ -53,28 +60,28 @@ const UserSignUp = () => {
       <div>
         <ErrorsDisplay errors={errors} />
         <form onSubmit={handleSubmit}>
-          <label for="firstName">First Name</label>
+          <label htmlFor="firstName">First Name</label>
           <input
             id="firstName"
             name="firstName"
             type="text"
             ref={firstName}
           />
-          <label for="lastName">Last Name</label>
+          <label htmlFor="lastName">Last Name</label>
           <input
             id="lastName"
             name="lastName"
             type="text"
             ref={lastName}
           />
-          <label for="emailAddress">Email Address</label>
+          <label htmlFor="emailAddress">Email Address</label>
           <input
             id="emailAddress"
             name="emailAddress"
             type="email"
             ref={emailAddress}
           />
-          <label for="password">Password</label>
+          <label htmlFor="password">Password</label>
           <input
             id="password"
             name="password"

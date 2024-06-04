@@ -13,14 +13,18 @@ const Course = () => {
     const { id } = useParams();
 
     useEffect(() => {
+        // Function to fetch course data from API
         const fetchCourse = async () => {
             try {
                 const res = await api(`/courses/${id}`, "GET", null, authUser);
                 if (res.status === 200) {
-                    const responseData = await res.json();
-                    setCourse(responseData);
+                    const resData = await res.json();
+                    setCourse(resData)
                 } else if (res.status === 404) {
-                    navigate('/NotFound');
+                    navigate('/NotFound')
+                } else { 
+                    console.log(`Unexpected Error. Status code: ${res.status}`)
+                    navigate('/Error');
                 }
             } catch (error) {
                 console.error('Error fetching course data', error);
@@ -30,6 +34,7 @@ const Course = () => {
         fetchCourse();
     }, [authUser, id, navigate]);
 
+    // Function to delete a course
     const deleteCourse = async (e) => {
         e.preventDefault();
         try {
@@ -44,6 +49,7 @@ const Course = () => {
                 console.log('You are not authorized to delete this course');
             } else {
                 console.log(`Unexpected Error. Status code: ${res.status}`)
+                navigate('/Error');
             }
         } catch (err) {
             console.error('Error deleting course', err);
@@ -55,7 +61,6 @@ const Course = () => {
         <main>
             <div className="actions--bar">
                 <div className="wrap">
-                    
                         {authUser && authUser.id === course.userId && (
                             <>
                                 <Link className="button" to={`/courses/${id}/update`}>Update Course</Link>
